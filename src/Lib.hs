@@ -3,9 +3,12 @@ module Lib
     ) where
 
 import System.Environment
+import Data.List.Split
+
+import SSAtoLlvm
 
 compile :: String -> String
-compile = id
+compile = ssasToLlvm . map (filter (/="") . splitOn " ") . filter (/=""). splitOn "\n"
 
 someFunc :: IO ()
 someFunc = do
