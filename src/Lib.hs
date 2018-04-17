@@ -5,15 +5,16 @@ module Lib
 import System.Environment
 import Data.List.Split
 
+import SSA
 import SSAtoLlvm
-
-compile :: String -> String
-compile = ssasToLlvm . map (filter (/="") . splitOn " ") . filter (/=""). splitOn "\n"
 
 someFunc :: IO ()
 someFunc = do
   args <- getArgs
   filename <- return $ head args
   source <- readFile filename
-  writeFile (filename ++ ".ll") $ compile source
+  ssaString <- return $ concat $ map show $ readSSA source
+  writeFile (filename ++ ".ssa") ssaString
+  llvmString <- return $ ssasToLlvm $ readSSA $ ssaString
+  writeFile (filename ++ ".ll") llvmString
   putStrLn "Done"
