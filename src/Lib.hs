@@ -5,6 +5,8 @@ module Lib
 import System.Environment
 import Data.List.Split
 
+import LispVal
+import LispValToSSA
 import SSA
 import SSAtoLlvm
 
@@ -13,7 +15,9 @@ someFunc = do
   args <- getArgs
   filename <- return $ head args
   source <- readFile filename
-  ssaString <- return $ concat $ map show $ readSSA source
+  lispVals <- return $ readLispVals source
+  ssas <- return $ lispValsToSSAs lispVals
+  ssaString <- return $ concat $ map show $ ssas 
   writeFile (filename ++ ".ssa") ssaString
   llvmString <- return $ ssasToLlvm $ readSSA $ ssaString
   writeFile (filename ++ ".ll") llvmString
